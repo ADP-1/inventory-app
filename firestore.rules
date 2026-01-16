@@ -1,0 +1,78 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- HELPERS ----------
+
+    // Check if user is logged in
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Check admin role
+    function isAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid))
+            .data.role == "admin";
+    }
+
+    // Check cashier role
+    function isCashier() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid))
+            .data.role == "cashier";
+    }
+
+    // ---------- USERS ----------
+
+    match /users/{userId} {
+      // Users can read their own profile
+      allow read: if isSignedIn() && request.auth.uid == userId;
+
+      // Only admin can create/update/delete users
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ---------- PRODUCTS ----------
+
+    match /products/{productId} {
+      // All logged-in users can read products
+      allow read: if isSignedIn();
+
+      // Only admin can manage products
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ---------- CUSTOMERS ----------
+
+    match /customers/{customerId} {
+      // Admin & cashier can read customers
+      allow read: if isSignedIn();
+
+      // Admin & cashier can create customers
+      allow create: if isSignedIn();
+
+      // Admin & cashier can update customers (e.g. fix phone number)
+      allow update: if isSignedIn();
+
+      // Only admin can delete customers
+      allow delete: if isAdmin();
+    }
+
+    // ---------- BILLS ----------
+
+    match /bills/{billId} {
+      // Admin & cashier can read bills
+      allow read: if isAdmin() || isCashier();
+
+      // Admin & cashier can create bills
+      allow create: if isAdmin() || isCashier();
+
+      // Bills are immutable (cannot be updated)
+      allow update: if false;
+
+      // Only admin can delete bills
+      allow delete: if isAdmin();
+    }
+  }
+}

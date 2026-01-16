@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "37297831372",
+    "project_id": "goyaltraders-d14ba",
+    "storage_bucket": "goyaltraders-d14ba.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37297831372:android:04ab9de6aa45e74c1c7169",
+        "android_client_info": {
+          "package_name": "com.example.goyaltraders"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA553LP15fGAK9PorPajnkoZB5fF5I7Vqk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
